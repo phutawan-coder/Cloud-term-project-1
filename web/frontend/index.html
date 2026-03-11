@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>File Upload</title>
+</head>
+<body>
+
+<h2>Upload File</h2>
+
+<input type="file" id="file">
+<button onclick="upload()">Upload</button>
+
+<h2>Files</h2>
+<ul id="files"></ul>
+
+<script>
+
+async function upload() {
+
+  const file = document.getElementById("file").files[0]
+
+  const formData = new FormData()
+  formData.append("file", file)
+
+  await fetch("/upload", {
+    method: "POST",
+    body: formData
+  })
+
+  loadFiles()
+}
+
+async function loadFiles() {
+
+  const res = await fetch("/files")
+  const files = await res.json()
+
+  const list = document.getElementById("files")
+
+  list.innerHTML = ""
+
+  files.forEach(f => {
+
+    const li = document.createElement("li")
+
+    li.innerHTML = `
+      ${f.filename}
+      <button onclick="download('${f.file_id}')">
+        download
+      </button>
+    `
+
+    list.appendChild(li)
+  })
+}
+
+async function download(id) {
+
+  const res = await fetch(`/download/${id}`)
+  const data = await res.json()
+
+  window.open(data.url)
+}
+
+loadFiles()
+
+</script>
+
+</body>
+</html>

@@ -3,9 +3,9 @@ provider "aws" {
   region = var.aws_region 
 }
 
-# module "network" {
-#   source = "../../modules/network/"
-# }
+module "network" {
+  source = "../../modules/network/"
+}
 
 module "iam" {
   source = "../../modules/iam/" 
@@ -14,13 +14,13 @@ module "iam" {
   dynamodb-arn = module.db.table-arn
 }
 
-# module "app" {
-#   source = "../../modules/app/" 
-#
-#   subnet_id = module.network.subnet_id
-#   security_group_id = module.network.security_group_id
-#   iam_instance_profile = module.iam.iam_instance_profile
-# }
+module "app" {
+  source = "../../modules/app/" 
+
+  subnet_id = module.network.subnet_id
+  security_group_id = module.network.security_group_id
+  iam_instance_profile = module.iam.iam_instance_profile
+}
 
 module "s3" {
   source = "../../modules/s3/"
