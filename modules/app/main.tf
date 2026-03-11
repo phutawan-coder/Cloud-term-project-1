@@ -11,7 +11,7 @@ resource "aws_instance" "this" {
               #!/bin/bash
               apt update
               apt install docker.io -y
-              docker run -d -p 80:5000 file-upload-app
+              docker run -d -p 80:5000 phutw-cloud-project
               EOF
 
   tags = {
