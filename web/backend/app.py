@@ -17,7 +17,7 @@ def upload():
 
     s3.upload_fileobj(
         file,
-        "my-bucket",
+        "s3-bucket-cloud-project-2026",
         f"uploads/{file.filename}"
     )
 
