@@ -19,7 +19,7 @@ module "app" {
 
   subnet_id = module.network.subnet_id
   security_group_id = module.network.security_group_id
-  iam_instance_profile = module.iam.iam_instance_profile
+  iam_instance_profile = module.iam.iam-instance-profile
 }
 
 module "s3" {
