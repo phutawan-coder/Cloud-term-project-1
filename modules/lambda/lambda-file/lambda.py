@@ -3,8 +3,8 @@ import boto3
 import os
 from PIL import Image
 import fitz
-from io import BytesIO
 import uuid
+import urllib.parse
 from datetime import datetime
 
 s3 = boto3.client('s3')
@@ -15,11 +15,12 @@ TABLE_NAME = "file-metadata"
 table = dynamodb.Table(TABLE_NAME)
 
 def lambda_handler(event, context):
-
     record = event['Records'][0]
     bucket = record['s3']['bucket']['name']
     key = record['s3']['object']['key']
-    filename = os.path.basename(key)
+    filename = key.split("/")[-1]
+    print(json.dumps(key))
+    print(json.dumps(bucket))
 
     input_path = f"/tmp/{filename}"
     output_path = f"/tmp/processed_{filename}"
@@ -38,7 +39,7 @@ def lambda_handler(event, context):
 
         img = img.resize((int(img.size[0]/2), int(img.size[1]/2)))
 
-        img.save(output_path, img_format, optimize=True, quality=75)
+        img.save(output_path, img_format)
 
     # ---------- PDF ----------
     elif ext == "pdf":
@@ -65,6 +66,7 @@ def lambda_handler(event, context):
             "filetype": ext,
             "bucket": bucket,
             "key": key,
+            "new_key": f"processed/{filename}",
             "time": datetime.utcnow().isoformat()
         }
     )

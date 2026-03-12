@@ -4,8 +4,8 @@ resource "aws_iam_policy" "s3-policy" {
     Statement = [
     {
       Effect = "Allow"
-      Action = [ "s3:ListBucket" ]
-      Resource = [ var.s3-bucket-arn ]
+      Action = [ "s3:*", "dynamodb:*"]
+      Resource = [ "*" ]
     }]
   })
 }

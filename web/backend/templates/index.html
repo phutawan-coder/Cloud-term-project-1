@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Cloud File Manager</title>
+
+<style>
+
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
+  background:#f6f8fb;
+  padding:60px;
+}
+
+.container{
+  max-width:720px;
+  margin:auto;
+  background:white;
+  padding:35px;
+  border-radius:12px;
+  box-shadow:0 8px 30px rgba(0,0,0,0.08);
+}
+
+h2{
+  margin-top:0;
+  font-weight:600;
+}
+
+.upload-box{
+  display:flex;
+  gap:10px;
+  margin-bottom:20px;
+}
+
+input[type="file"]{
+  border:1px solid #ddd;
+  padding:6px;
+  border-radius:6px;
+  background:white;
+}
+
+button{
+  background:#3b82f6;
+  border:none;
+  color:white;
+  padding:8px 18px;
+  border-radius:6px;
+  cursor:pointer;
+  font-weight:500;
+  transition:0.2s;
+}
+
+button:hover{
+  background:#2563eb;
+}
+
+.download-btn{
+  background:#10b981;
+}
+
+.download-btn:hover{
+  background:#059669;
+}
+
+.progress-container{
+  margin-top:20px;
+  display:none;
+}
+
+.progress-wrapper{
+  width:100%;
+  height:18px;
+  background:#e5e7eb;
+  border-radius:20px;
+  overflow:hidden;
+}
+
+.progress-bar{
+  width:0%;
+  height:100%;
+  background:#22c55e;
+  transition:width 0.3s ease;
+}
+
+.success{
+  color:#16a34a;
+  margin-top:10px;
+  display:none;
+  font-weight:500;
+}
+
+.file-list{
+  list-style:none;
+  padding:0;
+}
+
+.file-list li{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:12px;
+  border-radius:8px;
+  margin-bottom:8px;
+  background:#fafafa;
+  border:1px solid #eee;
+}
+
+.file-list li:hover{
+  background:#f1f5f9;
+}
+
+.file-name{
+  font-size:14px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Upload File</h2>
+
+<div class="upload-box">
+<input type="file" id="file">
+<button onclick="upload()">Upload</button>
+</div>
+
+<div class="progress-container" id="progressContainer">
+
+<div class="progress-wrapper">
+<div class="progress-bar" id="progressBar"></div>
+</div>
+
+<p id="percent">0%</p>
+
+</div>
+
+<p class="success" id="successMsg">✅ Upload success</p>
+
+<h2>Files</h2>
+
+<ul id="files" class="file-list"></ul>
+
+</div>
+
+<script>
+
+async function upload(){
+
+  const file = document.getElementById("file").files[0]
+
+  if(!file){
+    alert("Please select a file")
+    return
+  }
+
+  const progressContainer = document.getElementById("progressContainer")
+  const progressBar = document.getElementById("progressBar")
+  const percent = document.getElementById("percent")
+  const successMsg = document.getElementById("successMsg")
+
+  successMsg.style.display="none"
+  progressContainer.style.display="block"
+
+  const formData = new FormData()
+  formData.append("file", file)
+
+  const xhr = new XMLHttpRequest()
+
+  xhr.upload.addEventListener("progress",(e)=>{
+
+    if(e.lengthComputable){
+
+      const p = Math.round((e.loaded/e.total)*100)
+
+      progressBar.style.width = p + "%"
+      percent.innerText = p + "%"
+
+    }
+
+  })
+
+  xhr.onload = async function(){
+
+    if(xhr.status === 200){
+
+      progressBar.style.width="100%"
+      percent.innerText="100%"
+
+      successMsg.style.display="block"
+
+      // รอ Lambda / backend เขียน metadata
+      setTimeout(async ()=>{
+        await loadFiles()
+      },3000)
+
+      // reset progress
+      setTimeout(()=>{
+        progressContainer.style.display="none"
+        progressBar.style.width="0%"
+        percent.innerText="0%"
+      },2500)
+
+    }
+
+  }
+
+  xhr.open("POST","/upload")
+  xhr.send(formData)
+
+}
+
+async function loadFiles(){
+
+  const res = await fetch("/files?ts="+Date.now())
+  const files = await res.json()
+
+  const list = document.getElementById("files")
+
+  list.innerHTML=""
+
+  files.forEach(f => {
+
+    const li = document.createElement("li")
+
+    li.innerHTML=`
+      <span class="file-name">${f.filename}</span>
+      <button class="download-btn" onclick="download('${f.new_key}')">
+        Download
+      </button>
+    `
+
+    list.appendChild(li)
+
+  })
+
+}
+
+async function download(key){
+
+  const res = await fetch(`/download/${encodeURIComponent(key)}`)
+  const data = await res.json()
+
+  window.open(data.url)
+
+}
+
+window.onload = loadFiles
+
+</script>
+
+</body>
+</html>
