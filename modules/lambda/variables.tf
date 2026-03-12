@@ -3,5 +3,5 @@ variable "lambda-file" {
 }
 
 variable "lambda-iam-role-arn" {
-  type = string 
+  type = string
 }

@@ -3,7 +3,7 @@ variable "bucket-arn" {
 }
 
 variable "bucket-name" {
-  type = string 
+  type = string
 }
 
 variable "lambda-arn" {

@@ -3,5 +3,5 @@ variable "s3-bucket-arn" {
 }
 
 variable "dynamodb-arn" {
-  type = string 
+  type = string
 }

@@ -1,13 +1,13 @@
 variable "vpc_id" {
-  type = string 
+  type = string
 }
 
 variable "public_subnet" {
-  type = string 
+  type = string
 }
 
 variable "public_subnet_2" {
-  type = string 
+  type = string
 }
 
 variable "alb_sg" {

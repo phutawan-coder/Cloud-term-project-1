@@ -15,8 +15,8 @@ resource "aws_lb" "app_alb" {
   internal           = false
   load_balancer_type = "application"
 
-  security_groups = [ var.alb_sg ]
-  subnets         = [ var.public_subnet, var.public_subnet_2 ]
+  security_groups = [var.alb_sg]
+  subnets         = [var.public_subnet, var.public_subnet_2]
 }
 
 resource "aws_lb_listener" "http" {

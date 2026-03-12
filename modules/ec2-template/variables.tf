@@ -3,5 +3,5 @@ variable "ec2_sg" {
 }
 
 variable "profile" {
-  type = string 
+  type = string
 }

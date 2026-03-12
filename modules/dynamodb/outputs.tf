@@ -3,5 +3,5 @@ output "table-name" {
 }
 
 output "table-arn" {
-   value = aws_dynamodb_table.metadata_table.arn
+  value = aws_dynamodb_table.metadata_table.arn
 }

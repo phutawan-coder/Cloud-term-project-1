@@ -1,8 +1,8 @@
 resource "aws_launch_template" "app_lt" {
   name_prefix   = "app-template"
-  image_id      = "ami-018bef78e20688ef5"   
+  image_id      = "ami-018bef78e20688ef5"
   instance_type = "t3.micro"
-  key_name = "my-key-pair"
+  key_name      = "my-key-pair"
   iam_instance_profile {
     name = var.profile
   }
@@ -21,7 +21,7 @@ phutawan1906/phutw-cloud-project:v2
               EOF
   )
   network_interfaces {
-    security_groups = [ var.ec2_sg ]
+    security_groups = [var.ec2_sg]
   }
 }
 
